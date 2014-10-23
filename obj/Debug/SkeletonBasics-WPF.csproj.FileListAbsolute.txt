@@ -1,0 +1,12 @@
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\bin\Debug\SkeletonBasics-WPF.exe
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\bin\Debug\SkeletonBasics-WPF.pdb
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.csprojResolveAssemblyReference.cache
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\obj\Debug\MainWindow.baml
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\obj\Debug\MainWindow.g.cs
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\obj\Debug\App.g.cs
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF_MarkupCompile.cache
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.g.resources
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\obj\Debug\Microsoft.Samples.Kinect.SkeletonBasics.Properties.Resources.resources
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.csproj.GenerateResource.Cache
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.exe
+C:\Users\jmorenov\Dropbox\Universidad\5curso\1cuatrimestre\NPI\Prácticas\Kinect\SkeletonBasics-WPF\obj\Debug\SkeletonBasics-WPF.pdb
