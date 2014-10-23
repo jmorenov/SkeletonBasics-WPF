@@ -254,6 +254,27 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         {
             return Math.Abs(v1 - v2) / ((v1 + v2) / 2);
         }
+        private float ERROR = 0.09F;
+        private bool check(float x_shoulder, float y_shoulder, float x_elbow, float y_elbow, float x_wrist, float y_wrist, float x_hand, float y_hand)
+        {
+            float diff1 = diff(x_shoulder, x_elbow);
+            float diff2 = diff(x_elbow, x_wrist);
+            float diff3 = diff(x_wrist, x_hand);
+            float diff4 = diff(y_shoulder, y_elbow);
+            float diff5 = diff(y_elbow, y_wrist);
+            float diff6 = diff(y_wrist, y_hand);
+
+            if (diff1 <= ERROR
+                && diff2 <= ERROR
+                && diff3 <= ERROR
+                && diff4 <= ERROR
+                && diff5 <= ERROR
+                && diff6 <= ERROR) //OK
+            {
+                return true;
+            }
+            return false;
+        }
 
         /// <summary>
         /// Draws a skeleton's bones and joints
@@ -271,8 +292,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipLeft);
             this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipRight);
 
-            float ERROR = 0.09F;
-
             // Left Arm
             float x_shoulder = skeleton.Joints[JointType.ShoulderLeft].Position.X;
             float y_shoulder = skeleton.Joints[JointType.ShoulderLeft].Position.Y;
@@ -283,19 +302,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             float x_hand = skeleton.Joints[JointType.HandLeft].Position.X;
             float y_hand = skeleton.Joints[JointType.HandLeft].Position.Y;
 
-            float diff1 = diff(x_shoulder, x_elbow);
-            float diff2 = diff(x_elbow, x_wrist);
-            float diff3 = diff(x_wrist, x_hand);
-            float diff4 = diff(y_shoulder, y_elbow);
-            float diff5 = diff(y_elbow, y_wrist);
-            float diff6 = diff(y_wrist, y_hand);
-
-            if (diff1 <= ERROR 
-                && diff2 <= ERROR
-                && diff3 <= ERROR
-                && diff4 <= ERROR
-                && diff5 <= ERROR
-                && diff6 <= ERROR) //OK
+            if (check(x_shoulder, y_shoulder, x_elbow, y_elbow, x_wrist, y_wrist, x_hand, y_hand))
             {
                 this.DrawBone(skeleton, drawingContext, JointType.ShoulderLeft, JointType.ElbowLeft);
                 this.DrawBone(skeleton, drawingContext, JointType.ElbowLeft, JointType.WristLeft);
@@ -318,19 +325,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             x_hand = skeleton.Joints[JointType.HandRight].Position.X;
             y_hand = skeleton.Joints[JointType.HandRight].Position.Y;
 
-            diff1 = diff(x_shoulder, x_elbow);
-            diff2 = diff(x_elbow, x_wrist);
-            diff3 = diff(x_wrist, x_hand);
-            diff4 = diff(y_shoulder, y_elbow);
-            diff5 = diff(y_elbow, y_wrist);
-            diff6 = diff(y_wrist, y_hand);
-
-            if (diff1 <= ERROR
-                && diff2 <= ERROR
-                && diff3 <= ERROR
-                && diff4 <= ERROR
-                && diff5 <= ERROR
-                && diff6 <= ERROR) //OK
+           if(check(x_shoulder, y_shoulder, x_elbow, y_elbow, x_wrist, y_wrist, x_hand, y_hand))
             {
                 this.DrawBone(skeleton, drawingContext, JointType.ShoulderRight, JointType.ElbowRight);
                 this.DrawBone(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight);
