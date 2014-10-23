@@ -10,6 +10,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Windows;
     using System.Windows.Media;
     using Microsoft.Kinect;
+    using System;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -60,6 +61,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// Pen used for drawing bones that are currently tracked
         /// </summary>
         private readonly Pen trackedBonePen = new Pen(Brushes.Green, 6);
+
+        private readonly Pen failBonePen = new Pen(Brushes.Red, 6);
+
 
         /// <summary>
         /// Pen used for drawing bones that are currently inferred
@@ -246,6 +250,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
         }
 
+        private float diff(float v1, float v2)
+        {
+            return Math.Abs(v1 - v2) / ((v1 + v2) / 2);
+        }
+
         /// <summary>
         /// Draws a skeleton's bones and joints
         /// </summary>
@@ -262,16 +271,77 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipLeft);
             this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipRight);
 
+            float ERROR = 0.09F;
+
             // Left Arm
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderLeft, JointType.ElbowLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.ElbowLeft, JointType.WristLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.WristLeft, JointType.HandLeft);
+            float x_shoulder = skeleton.Joints[JointType.ShoulderLeft].Position.X;
+            float y_shoulder = skeleton.Joints[JointType.ShoulderLeft].Position.Y;
+            float x_elbow = skeleton.Joints[JointType.ElbowLeft].Position.X;
+            float y_elbow = skeleton.Joints[JointType.ElbowLeft].Position.Y;
+            float x_wrist = skeleton.Joints[JointType.WristLeft].Position.X;
+            float y_wrist = skeleton.Joints[JointType.WristLeft].Position.Y;
+            float x_hand = skeleton.Joints[JointType.HandLeft].Position.X;
+            float y_hand = skeleton.Joints[JointType.HandLeft].Position.Y;
+
+            float diff1 = diff(x_shoulder, x_elbow);
+            float diff2 = diff(x_elbow, x_wrist);
+            float diff3 = diff(x_wrist, x_hand);
+            float diff4 = diff(y_shoulder, y_elbow);
+            float diff5 = diff(y_elbow, y_wrist);
+            float diff6 = diff(y_wrist, y_hand);
+
+            if (diff1 <= ERROR 
+                && diff2 <= ERROR
+                && diff3 <= ERROR
+                && diff4 <= ERROR
+                && diff5 <= ERROR
+                && diff6 <= ERROR) //OK
+            {
+                this.DrawBone(skeleton, drawingContext, JointType.ShoulderLeft, JointType.ElbowLeft);
+                this.DrawBone(skeleton, drawingContext, JointType.ElbowLeft, JointType.WristLeft);
+                this.DrawBone(skeleton, drawingContext, JointType.WristLeft, JointType.HandLeft);
+            }
+            else
+            {
+                this.DrawBone2(skeleton, drawingContext, JointType.ShoulderLeft, JointType.ElbowLeft);
+                this.DrawBone2(skeleton, drawingContext, JointType.ElbowLeft, JointType.WristLeft);
+                this.DrawBone2(skeleton, drawingContext, JointType.WristLeft, JointType.HandLeft);
+            }
 
             // Right Arm
-            this.DrawBone(skeleton, drawingContext, JointType.ShoulderRight, JointType.ElbowRight);
-            this.DrawBone(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight);
-            this.DrawBone(skeleton, drawingContext, JointType.WristRight, JointType.HandRight);
+            x_shoulder = skeleton.Joints[JointType.ShoulderRight].Position.X;
+            y_shoulder = skeleton.Joints[JointType.ShoulderRight].Position.Y;
+            x_elbow = skeleton.Joints[JointType.ElbowRight].Position.X;
+            y_elbow = skeleton.Joints[JointType.ElbowRight].Position.Y;
+            x_wrist = skeleton.Joints[JointType.WristRight].Position.X;
+            y_wrist = skeleton.Joints[JointType.WristRight].Position.Y;
+            x_hand = skeleton.Joints[JointType.HandRight].Position.X;
+            y_hand = skeleton.Joints[JointType.HandRight].Position.Y;
 
+            diff1 = diff(x_shoulder, x_elbow);
+            diff2 = diff(x_elbow, x_wrist);
+            diff3 = diff(x_wrist, x_hand);
+            diff4 = diff(y_shoulder, y_elbow);
+            diff5 = diff(y_elbow, y_wrist);
+            diff6 = diff(y_wrist, y_hand);
+
+            if (diff1 <= ERROR
+                && diff2 <= ERROR
+                && diff3 <= ERROR
+                && diff4 <= ERROR
+                && diff5 <= ERROR
+                && diff6 <= ERROR) //OK
+            {
+                this.DrawBone(skeleton, drawingContext, JointType.ShoulderRight, JointType.ElbowRight);
+                this.DrawBone(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight);
+                this.DrawBone(skeleton, drawingContext, JointType.WristRight, JointType.HandRight);
+            }
+            else
+            {
+                this.DrawBone2(skeleton, drawingContext, JointType.ShoulderRight, JointType.ElbowRight);
+                this.DrawBone2(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight);
+                this.DrawBone2(skeleton, drawingContext, JointType.WristRight, JointType.HandRight);
+            }
             // Left Leg
             this.DrawBone(skeleton, drawingContext, JointType.HipLeft, JointType.KneeLeft);
             this.DrawBone(skeleton, drawingContext, JointType.KneeLeft, JointType.AnkleLeft);
@@ -348,6 +418,35 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             {
                 drawPen = this.trackedBonePen;
             }
+
+            drawingContext.DrawLine(drawPen, this.SkeletonPointToScreen(joint0.Position), this.SkeletonPointToScreen(joint1.Position));
+        }
+
+        private void DrawBone2(Skeleton skeleton, DrawingContext drawingContext, JointType jointType0, JointType jointType1)
+        {
+            Joint joint0 = skeleton.Joints[jointType0];
+            Joint joint1 = skeleton.Joints[jointType1];
+
+            // If we can't find either of these joints, exit
+            if (joint0.TrackingState == JointTrackingState.NotTracked ||
+                joint1.TrackingState == JointTrackingState.NotTracked)
+            {
+                return;
+            }
+
+            // Don't draw if both points are inferred
+            /*if (joint0.TrackingState == JointTrackingState.Inferred &&
+                joint1.TrackingState == JointTrackingState.Inferred)
+            {
+                return;
+            }*/
+
+            // We assume all drawn bones are inferred unless BOTH joints are tracked
+            Pen drawPen = this.inferredBonePen;
+            /*if (joint0.TrackingState == JointTrackingState.Tracked && joint1.TrackingState == JointTrackingState.Tracked)
+            {*/
+                drawPen = this.failBonePen;
+            //}
 
             drawingContext.DrawLine(drawPen, this.SkeletonPointToScreen(joint0.Position), this.SkeletonPointToScreen(joint1.Position));
         }
