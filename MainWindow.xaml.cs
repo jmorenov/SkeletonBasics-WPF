@@ -252,27 +252,54 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
         private float diff(float v1, float v2)
         {
-            return Math.Abs(v1 - v2) / ((v1 + v2) / 2);
+            return Math.Abs(v1 - v2);
+            //return Math.Abs(v1 - v2) / ((v1 + v2) / 2);
         }
-        private float ERROR = 0.09F;
-        private bool check(float x_shoulder, float y_shoulder, float x_elbow, float y_elbow, float x_wrist, float y_wrist, float x_hand, float y_hand)
-        {
-            float diff1 = diff(x_shoulder, x_elbow);
-            float diff2 = diff(x_elbow, x_wrist);
-            float diff3 = diff(x_wrist, x_hand);
-            float diff4 = diff(y_shoulder, y_elbow);
-            float diff5 = diff(y_elbow, y_wrist);
-            float diff6 = diff(y_wrist, y_hand);
 
-            if (diff1 <= ERROR
-                && diff2 <= ERROR
-                && diff3 <= ERROR
-                && diff4 <= ERROR
-                && diff5 <= ERROR
-                && diff6 <= ERROR) //OK
-            {
+        private float ERROR = 0.09F;
+        private bool checkPoints(SkeletonPoint P1, SkeletonPoint P2)
+        {
+            if (diff(P1.X, P2.X) <= ERROR && diff(P1.Y, P2.Y) <= ERROR)
                 return true;
+            return false;
+        }
+
+        private bool checkLeftArm(Skeleton skeleton)
+        {
+            if (checkArm(skeleton.Joints[JointType.ShoulderLeft].Position, skeleton.Joints[JointType.ElbowLeft].Position, 
+                skeleton.Joints[JointType.WristLeft].Position, skeleton.Joints[JointType.HandLeft].Position))
+                return true;
+            return false;
+        }
+
+        private bool checkRightArm(Skeleton skeleton)
+        {
+            if (checkArm(skeleton.Joints[JointType.ShoulderRight].Position, skeleton.Joints[JointType.ElbowRight].Position,
+                skeleton.Joints[JointType.WristRight].Position, skeleton.Joints[JointType.HandRight].Position))
+                return true;
+            return false;
+        }
+
+        enum Arm {Left, Right};
+
+        private bool checkShoulder(Arm arm)
+        {
+            bool check = false;
+            if(arm == Arm.Left)
+            {
+                
             }
+            else if (arm == Arm.Right)
+            {
+
+            }
+            return check;
+        }
+
+        private bool checkArm(SkeletonPoint shoulder, SkeletonPoint elbow, SkeletonPoint wrist, SkeletonPoint hand)
+        {
+            if (checkPoints(shoulder, elbow) && checkPoints(elbow, wrist) && checkPoints(wrist, hand))
+                return true;
             return false;
         }
 
@@ -293,50 +320,15 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipRight);
 
             // Left Arm
-            float x_shoulder = skeleton.Joints[JointType.ShoulderLeft].Position.X;
-            float y_shoulder = skeleton.Joints[JointType.ShoulderLeft].Position.Y;
-            float x_elbow = skeleton.Joints[JointType.ElbowLeft].Position.X;
-            float y_elbow = skeleton.Joints[JointType.ElbowLeft].Position.Y;
-            float x_wrist = skeleton.Joints[JointType.WristLeft].Position.X;
-            float y_wrist = skeleton.Joints[JointType.WristLeft].Position.Y;
-            float x_hand = skeleton.Joints[JointType.HandLeft].Position.X;
-            float y_hand = skeleton.Joints[JointType.HandLeft].Position.Y;
-
-            if (check(x_shoulder, y_shoulder, x_elbow, y_elbow, x_wrist, y_wrist, x_hand, y_hand))
-            {
-                this.DrawBone(skeleton, drawingContext, JointType.ShoulderLeft, JointType.ElbowLeft);
-                this.DrawBone(skeleton, drawingContext, JointType.ElbowLeft, JointType.WristLeft);
-                this.DrawBone(skeleton, drawingContext, JointType.WristLeft, JointType.HandLeft);
-            }
-            else
-            {
-                this.DrawBone2(skeleton, drawingContext, JointType.ShoulderLeft, JointType.ElbowLeft);
-                this.DrawBone2(skeleton, drawingContext, JointType.ElbowLeft, JointType.WristLeft);
-                this.DrawBone2(skeleton, drawingContext, JointType.WristLeft, JointType.HandLeft);
-            }
+            this.DrawBone(skeleton, drawingContext, JointType.ShoulderLeft, JointType.ElbowLeft);
+            this.DrawBone(skeleton, drawingContext, JointType.ElbowLeft, JointType.WristLeft);
+            this.DrawBone(skeleton, drawingContext, JointType.WristLeft, JointType.HandLeft);
 
             // Right Arm
-            x_shoulder = skeleton.Joints[JointType.ShoulderRight].Position.X;
-            y_shoulder = skeleton.Joints[JointType.ShoulderRight].Position.Y;
-            x_elbow = skeleton.Joints[JointType.ElbowRight].Position.X;
-            y_elbow = skeleton.Joints[JointType.ElbowRight].Position.Y;
-            x_wrist = skeleton.Joints[JointType.WristRight].Position.X;
-            y_wrist = skeleton.Joints[JointType.WristRight].Position.Y;
-            x_hand = skeleton.Joints[JointType.HandRight].Position.X;
-            y_hand = skeleton.Joints[JointType.HandRight].Position.Y;
+            this.DrawBone(skeleton, drawingContext, JointType.ShoulderRight, JointType.ElbowRight);
+            this.DrawBone(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight);
+            this.DrawBone(skeleton, drawingContext, JointType.WristRight, JointType.HandRight);
 
-           if(check(x_shoulder, y_shoulder, x_elbow, y_elbow, x_wrist, y_wrist, x_hand, y_hand))
-            {
-                this.DrawBone(skeleton, drawingContext, JointType.ShoulderRight, JointType.ElbowRight);
-                this.DrawBone(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight);
-                this.DrawBone(skeleton, drawingContext, JointType.WristRight, JointType.HandRight);
-            }
-            else
-            {
-                this.DrawBone2(skeleton, drawingContext, JointType.ShoulderRight, JointType.ElbowRight);
-                this.DrawBone2(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight);
-                this.DrawBone2(skeleton, drawingContext, JointType.WristRight, JointType.HandRight);
-            }
             // Left Leg
             this.DrawBone(skeleton, drawingContext, JointType.HipLeft, JointType.KneeLeft);
             this.DrawBone(skeleton, drawingContext, JointType.KneeLeft, JointType.AnkleLeft);
