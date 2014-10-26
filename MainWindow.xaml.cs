@@ -11,6 +11,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
     using System.Windows.Media;
     using Microsoft.Kinect;
     using System;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -48,21 +49,11 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         private readonly Brush centerPointBrush = Brushes.Blue;
 
         /// <summary>
-        /// Brush used for drawing joints that are currently tracked
-        /// </summary>
-        private readonly Brush trackedJointBrush = new SolidColorBrush(Color.FromArgb(255, 68, 192, 68));
-
-        /// <summary>
         /// Brush used for drawing joints that are currently inferred
         /// </summary>        
         private readonly Brush inferredJointBrush = Brushes.Yellow;
 
-        /// <summary>
-        /// Pen used for drawing bones that are currently tracked
-        /// </summary>
-        private readonly Pen trackedBonePen = new Pen(Brushes.Green, 6);
-
-        private readonly Pen failBonePen = new Pen(Brushes.Red, 6);
+        private Movimiento7 mov = new Movimiento7();
 
 
         /// <summary>
@@ -231,6 +222,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
                         if (skel.TrackingState == SkeletonTrackingState.Tracked)
                         {
+                            mov.setSkeleton(skel);
                             this.DrawBonesAndJoints(skel, dc);
                         }
                         else if (skel.TrackingState == SkeletonTrackingState.PositionOnly)
@@ -250,59 +242,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             }
         }
 
-        private float diff(float v1, float v2)
-        {
-            return Math.Abs(v1 - v2);
-            //return Math.Abs(v1 - v2) / ((v1 + v2) / 2);
-        }
-
-        private float ERROR = 0.09F;
-        private bool checkPoints(SkeletonPoint P1, SkeletonPoint P2)
-        {
-            if (diff(P1.X, P2.X) <= ERROR && diff(P1.Y, P2.Y) <= ERROR)
-                return true;
-            return false;
-        }
-
-        private bool checkLeftArm(Skeleton skeleton)
-        {
-            if (checkArm(skeleton.Joints[JointType.ShoulderLeft].Position, skeleton.Joints[JointType.ElbowLeft].Position, 
-                skeleton.Joints[JointType.WristLeft].Position, skeleton.Joints[JointType.HandLeft].Position))
-                return true;
-            return false;
-        }
-
-        private bool checkRightArm(Skeleton skeleton)
-        {
-            if (checkArm(skeleton.Joints[JointType.ShoulderRight].Position, skeleton.Joints[JointType.ElbowRight].Position,
-                skeleton.Joints[JointType.WristRight].Position, skeleton.Joints[JointType.HandRight].Position))
-                return true;
-            return false;
-        }
-
-        enum Arm {Left, Right};
-
-        private bool checkShoulder(Arm arm)
-        {
-            bool check = false;
-            if(arm == Arm.Left)
-            {
-                
-            }
-            else if (arm == Arm.Right)
-            {
-
-            }
-            return check;
-        }
-
-        private bool checkArm(SkeletonPoint shoulder, SkeletonPoint elbow, SkeletonPoint wrist, SkeletonPoint hand)
-        {
-            if (checkPoints(shoulder, elbow) && checkPoints(elbow, wrist) && checkPoints(wrist, hand))
-                return true;
-            return false;
-        }
-
         /// <summary>
         /// Draws a skeleton's bones and joints
         /// </summary>
@@ -319,6 +258,16 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipLeft);
             this.DrawBone(skeleton, drawingContext, JointType.HipCenter, JointType.HipRight);
 
+            // Left Leg
+            this.DrawBone(skeleton, drawingContext, JointType.HipLeft, JointType.KneeLeft);
+            this.DrawBone(skeleton, drawingContext, JointType.KneeLeft, JointType.AnkleLeft);
+            this.DrawBone(skeleton, drawingContext, JointType.AnkleLeft, JointType.FootLeft);
+
+            // Right Leg
+            this.DrawBone(skeleton, drawingContext, JointType.HipRight, JointType.KneeRight);
+            this.DrawBone(skeleton, drawingContext, JointType.KneeRight, JointType.AnkleRight);
+            this.DrawBone(skeleton, drawingContext, JointType.AnkleRight, JointType.FootRight);
+
             // Left Arm
             this.DrawBone(skeleton, drawingContext, JointType.ShoulderLeft, JointType.ElbowLeft);
             this.DrawBone(skeleton, drawingContext, JointType.ElbowLeft, JointType.WristLeft);
@@ -329,16 +278,6 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             this.DrawBone(skeleton, drawingContext, JointType.ElbowRight, JointType.WristRight);
             this.DrawBone(skeleton, drawingContext, JointType.WristRight, JointType.HandRight);
 
-            // Left Leg
-            this.DrawBone(skeleton, drawingContext, JointType.HipLeft, JointType.KneeLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.KneeLeft, JointType.AnkleLeft);
-            this.DrawBone(skeleton, drawingContext, JointType.AnkleLeft, JointType.FootLeft);
-
-            // Right Leg
-            this.DrawBone(skeleton, drawingContext, JointType.HipRight, JointType.KneeRight);
-            this.DrawBone(skeleton, drawingContext, JointType.KneeRight, JointType.AnkleRight);
-            this.DrawBone(skeleton, drawingContext, JointType.AnkleRight, JointType.FootRight);
- 
             // Render Joints
             foreach (Joint joint in skeleton.Joints)
             {
@@ -346,7 +285,8 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
 
                 if (joint.TrackingState == JointTrackingState.Tracked)
                 {
-                    drawBrush = this.trackedJointBrush;                    
+                    //drawBrush = this.trackedJointBrush;
+                    drawBrush = mov.getBrush(joint);
                 }
                 else if (joint.TrackingState == JointTrackingState.Inferred)
                 {
@@ -403,37 +343,9 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
             Pen drawPen = this.inferredBonePen;
             if (joint0.TrackingState == JointTrackingState.Tracked && joint1.TrackingState == JointTrackingState.Tracked)
             {
-                drawPen = this.trackedBonePen;
+                //drawPen = this.trackedBonePen;
+                drawPen = mov.getPen(jointType1);
             }
-
-            drawingContext.DrawLine(drawPen, this.SkeletonPointToScreen(joint0.Position), this.SkeletonPointToScreen(joint1.Position));
-        }
-
-        private void DrawBone2(Skeleton skeleton, DrawingContext drawingContext, JointType jointType0, JointType jointType1)
-        {
-            Joint joint0 = skeleton.Joints[jointType0];
-            Joint joint1 = skeleton.Joints[jointType1];
-
-            // If we can't find either of these joints, exit
-            if (joint0.TrackingState == JointTrackingState.NotTracked ||
-                joint1.TrackingState == JointTrackingState.NotTracked)
-            {
-                return;
-            }
-
-            // Don't draw if both points are inferred
-            /*if (joint0.TrackingState == JointTrackingState.Inferred &&
-                joint1.TrackingState == JointTrackingState.Inferred)
-            {
-                return;
-            }*/
-
-            // We assume all drawn bones are inferred unless BOTH joints are tracked
-            Pen drawPen = this.inferredBonePen;
-            /*if (joint0.TrackingState == JointTrackingState.Tracked && joint1.TrackingState == JointTrackingState.Tracked)
-            {*/
-                drawPen = this.failBonePen;
-            //}
 
             drawingContext.DrawLine(drawPen, this.SkeletonPointToScreen(joint0.Position), this.SkeletonPointToScreen(joint1.Position));
         }
