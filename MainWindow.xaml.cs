@@ -53,6 +53,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// </summary>        
         private readonly Brush inferredJointBrush = Brushes.Yellow;
 
+
         private Movimiento7 mov = new Movimiento7();
 
 
