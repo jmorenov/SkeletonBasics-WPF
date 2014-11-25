@@ -41,7 +41,7 @@ namespace Microsoft.Samples.Kinect.SkeletonBasics
         /// Lista de tamaño igual al número de JoinType que hay que comprobar, 
         /// en esta lista se almacenan los valores de error de cada posición.
         /// </summary>
-        private List<int> diff_positions = new List<int>(jointsTypes.Count);
+        private List<int> diff_positions = new List<int>(new int[jointsTypes.Count]);
 
         /// <summary>
         /// Brush used for drawing joints that are currently tracked
